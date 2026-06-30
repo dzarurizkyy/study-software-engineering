@@ -1,6 +1,6 @@
 # 🏗️ System Design & Architecture Guide
 
-A comprehensive reference for backend engineers — covering authentication, system reliability, and software architecture patterns.
+A comprehensive reference for backend engineers — covering authentication, system reliability, distributed tracing, and software architecture patterns.
 
 ---
 
@@ -16,6 +16,7 @@ A comprehensive reference for backend engineers — covering authentication, sys
 - [Timeout](#-timeout)
 - [Circuit Breaker](#-circuit-breaker)
 - [Backpressure](#-backpressure)
+- [OpenTelemetry & Distributed Tracing](#-opentelemetry--distributed-tracing)
 - [Quick Reference](#-quick-reference)
 
 ---
@@ -1028,6 +1029,222 @@ Budget is the only constraint      → Horizontal Scaling (just add servers)
 
 ---
 
+## 🔭 OpenTelemetry & Distributed Tracing
+
+> **Key Insight:** Logs alone are not enough for microservices debugging. OpenTelemetry provides a language-agnostic standard for tracing a single request across every service it touches — turning hours of log hunting into seconds of visual inspection.
+
+**The Problem Without Distributed Tracing**
+
+```
+User reports: "Create order returned 500 Internal Server Error"
+
+           Order Service
+               │
+               ├──► Payment Service
+               │         │
+               │         └──► Product Service
+               │
+               └──► Notification Service
+
+Question: Which service caused the 500?
+
+Developer has to:
+  1. Search logs in Order Service       — manually grep
+  2. Search logs in Payment Service     — manually grep
+  3. Search logs in Product Service     — manually grep
+  4. Search logs in Notification Service— manually grep
+  → Time-consuming, error-prone, no visual overview
+```
+
+**The Traditional (Manual) Workaround: Request ID**
+
+```
+✅ Simple but manual:
+
+  1. Entry service (Order) generates X-Request-ID: "req-001"
+  2. Every downstream call must forward this header
+  3. Every log line must include the Request ID
+
+Problems:
+  - One service forgets to forward the header → trace breaks
+  - No visualization — still just logs
+  - 100 services = 100 log files to check manually
+```
+
+**The Solution: OpenTelemetry**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    OPENTELEMETRY OVERVIEW                    │
+│                                                              │
+│  Standard SDK (per language)  →  Trace data  →  Collector   │
+│                                                              │
+│  Java: otel-javaagent.jar  (zero code change, agent mode)   │
+│  Go:   otel-go SDK         (instrument HTTP client)         │
+│  Node.js: @opentelemetry/* (setup + start.js)               │
+│  Bun/TS: @opentelemetry/* (same as Node.js)                 │
+│                                                              │
+│  Collector options:                                          │
+│    Free/OSS:  Jaeger UI, Zipkin                             │
+│    Commercial: Datadog, New Relic, Dynatrace                 │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Core Concepts**
+
+| Concept | Description |
+|---|---|
+| **Trace ID** | Unique ID assigned to one end-to-end request; propagated automatically across all services |
+| **Span** | One unit of work (an HTTP call, a DB query); each span belongs to a Trace |
+| **Parent Span** | The caller's span; child spans appear nested underneath it |
+| **Exporter** | The SDK component that sends trace data to the collector |
+| **Collector** | Central backend (Jaeger, Datadog, etc.) that stores and visualizes traces |
+
+**How Trace ID Propagates**
+
+```
+User request arrives at Order Service
+        │
+        ▼
+  [SDK generates Trace ID: "abc-123"]
+        │
+        ├──► HTTP call to Payment Service
+        │       Header: traceparent: abc-123
+        │       Payment SDK: "I have a Trace ID, I'll use it"
+        │           │
+        │           └──► HTTP call to Product Service
+        │                   Header: traceparent: abc-123
+        │                   (continues propagating automatically)
+        │
+        └──► HTTP call to Notification Service
+                Header: traceparent: abc-123
+
+All spans share Trace ID "abc-123" → Jaeger can reconstruct the full tree
+```
+
+**Setup Per Language**
+
+```
+Java — agent mode (zero application code change):
+  Dockerfile:
+    ADD otel-javaagent.jar /app/
+    ENV JAVA_TOOL_OPTIONS="-javaagent:/app/otel-javaagent.jar"
+    ENV OTEL_SERVICE_NAME=order-service
+    ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+
+Go — SDK mode (must instrument HTTP client manually):
+  // setup otel exporter
+  tp := initTracer()
+  defer tp.Shutdown(ctx)
+
+  // wrap http client so trace context is forwarded
+  client := &http.Client{
+    Transport: otelhttp.NewTransport(http.DefaultTransport),
+  }
+
+Node.js / Bun — SDK mode:
+  // start.js loaded before app starts
+  const sdk = new NodeSDK({ traceExporter, instrumentations })
+  sdk.start()
+  // all HTTP calls and DB queries traced automatically
+```
+
+**What You See in Jaeger UI**
+
+```
+Trace: abc-123  (total: 312ms)
+│
+├── Order Service: POST /order              [0ms – 312ms]
+│     │
+│     ├── Product Service: GET /product/1  [5ms – 48ms]
+│     │     └── DB: SELECT * FROM products [8ms – 20ms]
+│     │           db.statement: SELECT * FROM products WHERE id=1
+│     │
+│     ├── Payment Service: POST /payment   [50ms – 180ms]
+│     │     └── DB: INSERT INTO payments   [60ms – 100ms]
+│     │
+│     ├── Notification: POST /notify       [185ms – 240ms]
+│     │
+│     └── DB: UPDATE orders SET status=   [245ms – 290ms]
+
+Color coding:
+  ■ Green  = success
+  ■ Red    = error (500, timeout, connection refused)
+```
+
+**Debugging an Error with Jaeger**
+
+```
+Scenario: Order Service returns 500
+
+Step 1: Find trace by Trace ID in Jaeger
+        (or filter by service = "order-service", tag = error=true)
+
+Step 2: Expand the trace tree
+
+Step 3: Find the red span
+        → Product Service: GET /product/999  [404 Not Found]
+
+Step 4: Root cause identified in seconds:
+        Order Service called a product that doesn't exist,
+        didn't handle the 404, and propagated it as a 500
+
+Without Jaeger: 30–60 minutes of log digging
+With Jaeger:    < 60 seconds to find the red span
+```
+
+**Best Practice: Return Trace ID to the Client**
+
+```
+HTTP Response Header:
+  X-Trace-Id: abc-123-def-456
+
+Why:
+  → When a user reports an error, they can include the Trace ID
+  → Support / developer pastes the ID into Jaeger → instant root cause
+
+User: "I got an error, Trace ID: abc-123-def-456"
+Dev:  [paste into Jaeger search]
+Dev:  "Found it — Product Service returned 404 for product ID 999"
+      Root cause identified in < 1 minute
+```
+
+**OpenTelemetry with Message Brokers**
+
+```
+Works beyond HTTP — supports Kafka, RabbitMQ, Redis:
+
+Payment Service ──► Kafka topic: payments
+                        │   (trace context in message headers)
+                        ▼
+              Notification Service consumes message
+                        │
+                        ▼
+              Trace continues — same Trace ID visible in Jaeger
+
+Jaeger shows:
+  Payment Service: publish to Kafka  [span]
+    └── Notification Service: consume from Kafka  [child span]
+```
+
+**Implementation Checklist**
+
+```
+Per service:
+  ✅ Add OpenTelemetry SDK (or agent for Java)
+  ✅ Set OTEL_SERVICE_NAME (unique per service)
+  ✅ Set OTEL_EXPORTER_OTLP_ENDPOINT (point to collector)
+  ✅ Instrument HTTP client (Go, Node.js, Bun)
+  ✅ Return X-Trace-Id header in HTTP responses
+
+Infrastructure:
+  ✅ Deploy Jaeger (or chosen collector)
+  ✅ Expose Jaeger UI (port 16686)
+  ✅ Open OTLP port (4317 gRPC / 4318 HTTP)
+```
+
+---
+
 ## 📌 Quick Reference
 
 | Topic | Core Problem | Key Solution |
@@ -1042,3 +1259,4 @@ Budget is the only constraint      → Horizontal Scaling (just add servers)
 | **Timeout** | App hangs forever | Set timeout above third-party server's own timeout |
 | **Circuit Breaker** | Downstream failure cascades | Open circuit → drop requests → fallback → half-open test |
 | **Backpressure** | Requests pile up faster than processed | Queue / Rate limit / Broker depending on traffic pattern |
+| **OpenTelemetry** | Impossible to trace errors across services | SDK per service + Trace ID propagation + Jaeger UI |
