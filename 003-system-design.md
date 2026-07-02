@@ -12,6 +12,7 @@ A comprehensive reference for backend engineers — covering authentication, sys
 - [Preventing Downtime in Kubernetes](#-preventing-downtime-in-kubernetes)
 - [Before Migrating to Microservices](#-before-migrating-to-microservices)
 - [Before Using Kafka](#-before-using-kafka)
+- [ClickHouse & OLAP Analytics](#-clickhouse--olap-analytics)
 - [Software Architecture Patterns](#-software-architecture-patterns)
 - [Timeout](#-timeout)
 - [Circuit Breaker](#-circuit-breaker)
@@ -545,6 +546,157 @@ Recommendation:
 
 Each group has its own offset — no competition for messages
 ```
+
+---
+
+## 📊 ClickHouse & OLAP Analytics
+
+> **Key Insight:** ClickHouse is a column-oriented OLAP database built for analyzing huge volumes of data fast — it complements an OLTP database like PostgreSQL/MySQL, it does not replace it.
+
+**OLTP vs OLAP**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      OLTP vs OLAP                            │
+│                                                              │
+│  OLTP (Online Transaction Processing)                        │
+│    Row-oriented    →  PostgreSQL, MySQL, Oracle              │
+│    Optimized for many small, fast transactions                │
+│    INSERT / UPDATE / DELETE on individual rows                │
+│                                                              │
+│  OLAP (Online Analytical Processing)                          │
+│    Column-oriented →  ClickHouse                              │
+│    Optimized for reading huge volumes for analysis            │
+│    Aggregation, business insight, large scale SELECT          │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Syncing Data: Batch ETL vs CDC**
+
+```
+Batch ETL (traditional):
+  Extract → Transform → Load   (runs on a schedule, e.g. hourly)
+  OLAP data is stale until the next run ❌
+
+CDC (Change Data Capture) — recommended:
+  OLTP write ──► WAL (Write-Ahead Log) ──► CDC tool captures the change
+                                                    │
+                                                    ▼
+                                        Streamed into OLAP in seconds ✅
+```
+
+**Demo Architecture**
+
+```
+PostgreSQL (OLTP)
+      │  WAL
+      ▼
+  Debezium (CDC tool)
+      │
+      ▼
+  Apache Kafka (message broker)
+      │
+      ▼
+  ClickHouse (OLAP)
+      │
+      ▼
+  Spring Boot (data generator + dashboard)
+
+Tables captured by Debezium:
+  customers, products, orders, order_items
+```
+
+**ClickHouse's Native Kafka Integration**
+
+```
+No bridge app needed (e.g. Logstash) — ClickHouse reads Kafka natively
+via a declarative Kafka Engine table.
+
+      Kafka topic
+          │
+          ▼
+  [Kafka Engine table]   ← staging / ingestion table
+          │
+          │  Materialized View (acts like a trigger)
+          ▼
+  [Main table]            ← MergeTree / ReplacingMergeTree
+```
+
+**Table Engines**
+
+| Engine | Behavior | Best For |
+|---|---|---|
+| **MergeTree** | Append-only — data keeps growing | Time-series / chronological event data |
+| **ReplacingMergeTree** | Overwrites the row with the same ID, keeping the latest by timestamp | Mutable entities (customers, products) — avoids expensive OLAP `UPDATE`s |
+
+**5 Analytics Features (Demo Dashboard)**
+
+Demo app generates 5 orders every 2 seconds to simulate live traffic.
+
+### 1. Streaming
+
+```
+One query, multiple time windows — countIf() / sumIf():
+  → order count & revenue for last 1m / 5m / 15m / 1h, simultaneously
+
+lagInFrame() compares the current window vs the previous one
+  → reveals velocity / acceleration of incoming data
+```
+
+### 2. Funnel
+
+```
+windowFunnel() tracks an ordered sequence of statuses per order:
+
+  place ──► paid ──► ship ──► delivered
+
+Shows conversion rate at each step and where customers drop off
+```
+
+### 3. Distribution (Cardinality Estimation)
+
+```
+Problem: count(DISTINCT user_id) over billions of rows is very expensive
+
+Solution: uniqCombined() — HyperLogLog algorithm
+  → Approximates the unique count
+  → ~1% margin of error
+  → Instant even at billion-row scale
+```
+
+### 4. Pre-Aggregated
+
+```
+AggregatingMergeTree + Materialized View
+  → Rolls raw events up into per-minute aggregates as they arrive
+  → Dashboard queries the small pre-aggregated table, not raw events
+  → Chart loads instantly regardless of underlying data volume
+```
+
+### 5. Time Travel
+
+```
+Data is append-only (never overwritten in place)
+  → Move a time slider to any past moment
+  → Reconstruct the exact state of the data at that point in time
+  → Useful for auditing / historical comparison
+```
+
+**Conclusion**
+
+```
+ClickHouse complements an OLTP database — it does NOT replace
+PostgreSQL or MySQL.
+
+  OLTP → source of truth, real-time transactions
+  OLAP → analytics, reporting, business insight
+
+Note: OLAP data has a small replication lag — not guaranteed to be
+query-ready at the exact same millisecond it was inserted into OLTP.
+```
+
+> Demo source code: `oltp-olap-demo` (GitHub)
+> Stack: PostgreSQL → Debezium → Kafka → ClickHouse → Spring Boot
 
 ---
 
@@ -1255,6 +1407,7 @@ Infrastructure:
 | **Kubernetes** | App still crashes despite K8s | Min pods ≥ 2, performance test, early autoscale trigger |
 | **Microservices** | Migrating too early | Monolith → Optimize → CQRS → Microservices (last resort) |
 | **Kafka** | Wrong tool selection | Understand partitions, ordering guarantees, and 1MB limit first |
+| **ClickHouse (OLAP)** | OLTP DB not built for analytics at scale | Column-oriented store fed via CDC (Debezium → Kafka) in near real-time |
 | **Architecture** | Wrong pattern for context | No right/wrong — only appropriate/inappropriate |
 | **Timeout** | App hangs forever | Set timeout above third-party server's own timeout |
 | **Circuit Breaker** | Downstream failure cascades | Open circuit → drop requests → fallback → half-open test |
