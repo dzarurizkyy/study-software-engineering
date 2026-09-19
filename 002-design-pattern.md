@@ -7,7 +7,13 @@ A comprehensive reference guide for design patterns, architectures, and best pra
 ## 📋 Table of Contents
 
 - [Introduction](#-introduction)
-- [What are Design Patterns](#-what-are-design-patterns)
+  - [Who Is This For?](#who-is-this-for)
+  - [What This Material Covers](#what-this-material-covers)
+  - [Why Learn Design Patterns?](#why-learn-design-patterns)
+- [What are Design Patterns?](#-what-are-design-patterns)
+  - [Definition](#definition)
+  - [Core Benefits](#core-benefits)
+  - [Common Misconception](#common-misconception)
 - [Creational Patterns](#-creational-patterns)
   - [Singleton](#-singleton)
   - [Builder](#-builder)
@@ -29,21 +35,21 @@ A comprehensive reference guide for design patterns, architectures, and best pra
 
 ## 🎯 Introduction
 
-**Who Is This For?**
+### Who Is This For?
 
 - **Web Developers** — Build maintainable, scalable applications
 - **System Designers** — Design flexible, extensible architectures
 - **Team Leads** — Establish code standards and patterns across teams
 - **Anyone writing production code** — Master proven solutions to recurring problems
 
-**What This Material Covers**
+### What This Material Covers
 
 - Theory and practical implementation of 11 major design patterns
 - Real-world code examples in JavaScript and TypeScript
 - Backend and frontend pattern applications
 - Industry best practices and common pitfalls
 
-**Why Learn Design Patterns?**
+### Why Learn Design Patterns?
 
 - **Proven solutions** — Tested by experts over decades
 - **Communication** — Shared vocabulary with other developers
@@ -57,13 +63,13 @@ A comprehensive reference guide for design patterns, architectures, and best pra
 
 > **Analogy:** Architecture patterns are like recipe templates in a cookbook. Instead of inventing a new way to bake bread every time, you use established recipes that work. The recipe is a proven solution to a cooking problem — how to make bread rise properly, how to balance flour and water, how to get the right crust. Similarly, design patterns are proven solutions to common programming problems.
 
-**Definition**
+### Definition
 
 - **Design patterns** are reusable templates for solving recurring architectural and structural problems
 - They describe **best practices** distilled from collective programming experience
 - Different from algorithms — patterns are about **structure and relationships**, not step-by-step computation
 
-**Core Benefits**
+### Core Benefits
 
 - **Avoid reinventing the wheel** — Use solutions that are battle-tested
 - **Cleaner code** — Code becomes self-documenting when others recognize the pattern
@@ -71,7 +77,7 @@ A comprehensive reference guide for design patterns, architectures, and best pra
 - **Faster debugging** — Knowing the pattern tells you where to look for issues
 - **Scaling development** — Teams can coordinate better when speaking the same pattern language
 
-**Common Misconception**
+### Common Misconception
 
 ❌ Not every problem needs a pattern — patterns are tools, not mandates  
 ✅ Use patterns when they solve a genuine pain point in your code
@@ -167,7 +173,7 @@ const response = await apiClient.get("/products"); // Token auto-added
 
 ---
 
-### 🏗️ Builder
+### 🧱 Builder
 
 **Problem**
 
@@ -312,7 +318,7 @@ const userData = new UserBuilder()
 
 ---
 
-### 🏭 Factory Method
+### ⚙️ Factory Method
 
 **Problem**
 
@@ -435,7 +441,7 @@ function CheckoutButton() {
 
 ---
 
-### 🎭 Abstract Factory
+### 🏛️ Abstract Factory
 
 **Problem**
 
@@ -674,7 +680,7 @@ console.log(person2.address.city); // 'Jakarta' — correct!
 
 ---
 
-### 🎯 Object Pool
+### 🔄 Object Pool
 
 **Problem**
 
@@ -1054,7 +1060,7 @@ router.post("/checkout", async (req, res) => {
 
 **Structure**
 
-```
+```text
 Application Layer
        ↓
   Repository Layer (findAll, findById, insert, update, delete)
@@ -1153,7 +1159,7 @@ Patterns focused on **communication between objects** and **responsibility alloc
 
 ---
 
-### 📋 Template Method
+### 📐 Template Method
 
 **Problem**
 
