@@ -7,10 +7,37 @@ A practical career guide for aspiring and junior programmers — covering commun
 ## 📋 Table of Contents
 
 - [Community Matters](#-community-matters)
+  - [Why Community is a Career Multiplier](#why-community-is-a-career-multiplier)
+  - [How Community Works](#how-community-works)
+  - [Types of Community to Join](#types-of-community-to-join)
+  - [Action Items](#action-items)
 - [Focus on One Language](#-focus-on-one-language)
+  - [The Problem in School](#the-problem-in-school)
+  - [The Right Approach](#the-right-approach)
+  - [How to Handle School's Language Requirements](#how-to-handle-schools-language-requirements)
+  - [Why Depth Beats Breadth](#why-depth-beats-breadth)
 - [Before You Start Coding](#-before-you-start-coding)
-- [How to Land a Job](#-how-to-land-a-job-softskill-1)
-- [How to Get a Raise](#-how-to-get-a-raise-softskill-2)
+  - [The Real Foundation: Computational Thinking](#the-real-foundation-computational-thinking)
+  - [The Recipe Analogy](#the-recipe-analogy)
+  - [The 4 Pillars of Computational Thinking](#the-4-pillars-of-computational-thinking)
+  - [Where to Train: code.org](#where-to-train-codeorg)
+  - [Already Started Coding But Feel Lost?](#already-started-coding-but-feel-lost)
+- [How to Land a Job (SoftSkill 1)](#-how-to-land-a-job-softskill-1)
+  - [The Irony of the IT Job Market](#the-irony-of-the-it-job-market)
+  - [1. Focus on One Specific Skill](#1-focus-on-one-specific-skill)
+  - [2. Find a Mentor](#2-find-a-mentor)
+  - [3. Personal Branding](#3-personal-branding)
+  - [4. Join & Be Active in Communities](#4-join--be-active-in-communities)
+  - [5. Scholarships & Hackathons (Optional)](#5-scholarships--hackathons-optional)
+  - [Your Career Launch Roadmap](#your-career-launch-roadmap)
+- [How to Get a Raise (SoftSkill 2)](#-how-to-get-a-raise-softskill-2)
+  - [1. Contribute More Than Required](#1-contribute-more-than-required)
+  - [2. Ask for More Responsibility](#2-ask-for-more-responsibility)
+  - [3. Ask Directly](#3-ask-directly)
+  - [4. Switch Jobs](#4-switch-jobs)
+  - [5. Fake-Out (Use with Caution)](#5-fake-out-use-with-caution)
+  - [The Raise Decision Tree](#the-raise-decision-tree)
+  - [Strategy Comparison](#strategy-comparison)
 - [Quick Reference](#-quick-reference)
 
 ---
@@ -19,17 +46,16 @@ A practical career guide for aspiring and junior programmers — covering commun
 
 > **Key Insight:** Being active in a community is not just a social activity — it is a long-term career investment that creates opportunities you cannot manufacture on your own.
 
-**Why Community is a Career Multiplier**
+### Why Community is a Career Multiplier
 
 - Senior professionals inside communities actively look for talent
 - When you contribute, people notice your skills long before you need a job
 - Community peers recommend you before you even apply
 - Connections span across companies and cities
 
+### How Community Works
 
-**How Community Works**
-
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                   COMMUNITY FLYWHEEL                    │
 │                                                         │
@@ -43,16 +69,16 @@ A practical career guide for aspiring and junior programmers — covering commun
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Types of Community to Join**
+### Types of Community to Join
 
 | Type | Examples | Benefit |
-|---|---|---|
+| --- | --- | --- |
 | Language-specific | Java User Group, Python ID | Deep technical peers |
 | Domain-specific | Mobile Dev, Web Dev | Career-aligned network |
 | University / Local | Campus clubs, city meetups | Early exposure |
 | Online | Discord, Slack, GitHub | Global reach |
 
-**Action Items**
+### Action Items
 
 - Join communities **outside** your school or university
 - Contribute actively — answer questions, share your work
@@ -65,16 +91,15 @@ A practical career guide for aspiring and junior programmers — covering commun
 
 > **Key Insight:** Many programmers know many languages shallowly. The ones who stand out know one language deeply. Surface-level knowledge fails when real bugs hit in production.
 
-**The Problem in School**
+### The Problem in School
 
 - Different courses force different languages: Pascal → Java → PHP → C++
 - Students end up "knowing" 5 languages but mastering none
 - In the real world, deep knowledge beats broad familiarity every time
 
+### The Right Approach
 
-**The Right Approach**
-
-```
+```text
 Phase 1 — Explore (≈1 Month)
 ├── Try a few popular languages
 ├── Note which one excites you most
@@ -90,10 +115,9 @@ Phase 3 — Career Ready
 └── You're already an expert before graduating
 ```
 
+### How to Handle School's Language Requirements
 
-**How to Handle School's Language Requirements**
-
-```
+```text
 ┌──────────────────────────────────────────────┐
 │       Professor requires Language X          │
 └──────────────────────────┬───────────────────┘
@@ -112,10 +136,10 @@ Phase 3 — Career Ready
                                     outside class
 ```
 
-**Why Depth Beats Breadth**
+### Why Depth Beats Breadth
 
 | Shallow (Many Languages) | Deep (One Language) |
-|---|---|
+| --- | --- |
 | Can write code in 5 languages | Understands internals deeply |
 | Struggles with production bugs | Debugs complex errors confidently |
 | Hard to stand out | Recognized as a go-to expert |
@@ -127,17 +151,16 @@ Phase 3 — Career Ready
 
 > **Key Insight:** The #1 mistake beginners make is jumping straight into a programming language without building the underlying thinking skill first.
 
-**The Real Foundation: Computational Thinking**
+### The Real Foundation: Computational Thinking
 
 - Not memorization — it's a **way of thinking**
 - Solve problems logically, structurally, and consistently
 - Remove reliance on "feeling" or intuition
 - Every instruction must be precise and reproducible
 
+### The Recipe Analogy
 
-**The Recipe Analogy**
-
-```
+```text
 ❌ Vague Instruction (Intuition-based)
    "Fry until hot"
    "Add salt to taste"
@@ -151,10 +174,9 @@ Phase 3 — Career Ready
 
 > Code works the same way — instructions must be precise enough that any machine can execute them identically every time.
 
+### The 4 Pillars of Computational Thinking
 
-**The 4 Pillars of Computational Thinking**
-
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │              COMPUTATIONAL THINKING PILLARS             │
 │                                                         │
@@ -167,17 +189,16 @@ Phase 3 — Career Ready
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Where to Train: code.org**
+### Where to Train: code.org
 
 - Teaches logic through visual, interactive games
 - Covers: sequences, loops, conditionals
 - Challenges you to solve problems with the **minimum number of instructions** → trains efficiency thinking
 - Great for all levels, especially beginners
 
+### Already Started Coding But Feel Lost?
 
-**Already Started Coding But Feel Lost?**
-
-```
+```text
 Step 1: Pause coding for ~1 week
         │
 Step 2: Train computational thinking on code.org
@@ -195,9 +216,9 @@ Step 4: You'll progress significantly faster
 
 > **Key Insight:** The job market is paradoxical — candidates can't find jobs, and companies can't find talent. These 5 strategies put you in the visible, hire-ready category.
 
-**The Irony of the IT Job Market**
+### The Irony of the IT Job Market
 
-```
+```text
 ┌──────────────────────┐         ┌──────────────────────┐
 │    JOB SEEKERS       │         │     COMPANIES        │
 │                      │         │                      │
@@ -212,23 +233,20 @@ Step 4: You'll progress significantly faster
              are simply not seen
 ```
 
-**The 5 Strategies**
-
 ### 1. Focus on One Specific Skill
 
 - University only teaches basics — industry moves faster
 - Choose a specialization: Front-End, Back-End, Mobile, DevOps, etc.
 - Spend free hours doing a deep dive, not bouncing between trends
 
-```
+```text
 ❌ Knowing React, Vue, Angular, Svelte — all at 20%
 ✅ Knowing React deeply — architecture, performance, internals
 ```
 
-
 ### 2. Find a Mentor
 
-```
+```text
 Without Mentor              With Mentor
 ─────────────               ────────────
 Random browsing      vs.    Clear learning roadmap
@@ -239,12 +257,11 @@ Confused direction   vs.    Industry-aligned path
 
 > **Important:** A mentor isn't a private tutor. Reach out politely, ask for a learning roadmap, request feedback occasionally. Respect their time.
 
-
 ### 3. Personal Branding
 
 **The Core Idea:** Share your learning publicly so the industry can find you.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                  PERSONAL BRANDING LOOP                 │
 │                                                         │
@@ -261,7 +278,6 @@ Confused direction   vs.    Industry-aligned path
 - Participate in technical forums
 - **Don't wait until you're "expert"** — share from day 1
 
-
 ### 4. Join & Be Active in Communities
 
 - Choose communities aligned with your target career (e.g., Web, Mobile)
@@ -269,17 +285,15 @@ Confused direction   vs.    Industry-aligned path
 - Tech leads and engineering managers monitor communities looking for talent
 - Active, helpful members get approached with job offers directly
 
-
 ### 5. Scholarships & Hackathons *(Optional)*
 
 - Major tech companies run student scholarship programs
 - Hackathon participants get mentored by industry experts
 - Graduates are often fast-tracked into recruitment pipelines
 
+### Your Career Launch Roadmap
 
-**Your Career Launch Roadmap**
-
-```
+```text
 Student / Entry Level
        │
        ├─► Pick Specialization (1 specific skill)
@@ -303,11 +317,9 @@ Student / Entry Level
 
 > **Key Insight:** Getting a raise is not luck — it follows a clear, professional path. These 5 strategies work from the most sustainable to the most aggressive.
 
-**The 5 Strategies**
-
 ### 1. Contribute More Than Required
 
-```
+```text
 Company sets KPI targets
          │
          ▼
@@ -323,7 +335,6 @@ OR: Deliver the same tasks faster & at higher quality
     (e.g., finish 1 quarter early = exceptional signal)
 ```
 
-
 ### 2. Ask for More Responsibility
 
 - Don't just wait to be promoted — actively request it
@@ -331,10 +342,9 @@ OR: Deliver the same tasks faster & at higher quality
 - Shows initiative and readiness for the next level
 - Raises follow responsibility, not time served
 
-
 ### 3. Ask Directly
 
-```
+```text
 Many employees feel salary talk is taboo
                 │
                 ▼
@@ -349,7 +359,6 @@ Many employees feel salary talk is taboo
 
 > Most companies do annual reviews, but a direct conversation can unlock mid-year adjustments. The worst outcome is useful feedback.
 
-
 ### 4. Switch Jobs
 
 - If you've done steps 1–3 and the company still won't adjust: leave
@@ -358,10 +367,9 @@ Many employees feel salary talk is taboo
 
 > ⚠️ Switching too frequently (every few months) raises red flags with HR
 
-
 ### 5. Fake-Out *(Use with Caution)*
 
-```
+```text
 Strategy:
 1. Apply and interview at other companies
 2. Receive an official Offering Letter
@@ -372,9 +380,9 @@ Strategy:
 Risk: Only do this if you're genuinely open to leaving
 ```
 
-**The Raise Decision Tree**
+### The Raise Decision Tree
 
-```
+```text
 Are you performing above expectations?
        │
   Yes  │  No ──────► Focus on performance first
@@ -399,10 +407,10 @@ Consider switching jobs
 (or the fake-out as a last resort)
 ```
 
-**Strategy Comparison**
+### Strategy Comparison
 
 | Strategy | Best For | Risk | Long-term Reputation |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Exceed KPI | Everyone | None | ⭐⭐⭐⭐⭐ |
 | More Responsibility | Growth-minded | None | ⭐⭐⭐⭐⭐ |
 | Ask Directly | All stages | Very low | ⭐⭐⭐⭐⭐ |
@@ -414,9 +422,11 @@ Consider switching jobs
 ## 📌 Quick Reference
 
 | Topic | Core Message | First Action |
-|---|---|---|
+| --- | --- | --- |
 | **Community** | Your network is your career engine | Join 1 community outside school this week |
 | **One Language** | Depth beats breadth | Pick 1 language, commit for 1 year |
 | **Computational Thinking** | Mindset before syntax | Spend 1 week on code.org |
 | **Landing a Job** | Visibility beats resumes | Start a blog or video channel |
 | **Getting a Raise** | Ask, don't wait | Schedule a 1-on-1 with your manager |
+
+</content>
