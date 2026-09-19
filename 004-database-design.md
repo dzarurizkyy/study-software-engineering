@@ -9,14 +9,18 @@ Practical database design patterns for real-world features — covering multi-la
 - [Multi-Language Support](#-multi-language-support)
   - [The Problem with Adding Columns](#the-problem-with-adding-columns)
   - [The Solution: Translation Table](#the-solution-translation-table)
+  - [Schema Design](#schema-design)
   - [SQL Implementation](#sql-implementation)
   - [Querying by Language](#querying-by-language)
+  - [Adding a New Language](#adding-a-new-language)
 - [Notification System](#-notification-system)
   - [Feature Requirements](#feature-requirements)
   - [Table Design Overview](#table-design-overview)
   - [User & Notification Tables](#user--notification-tables)
+  - [Why `user_id` is Nullable](#why-user_id-is-nullable)
   - [Category Table](#category-table)
   - [Read / Unread Status](#read--unread-status)
+  - [Read / Unread Decision Flow](#read--unread-decision-flow)
   - [Notification Counter](#notification-counter)
 - [Quick Reference](#-quick-reference)
 
@@ -26,11 +30,11 @@ Practical database design patterns for real-world features — covering multi-la
 
 > **Key Insight:** Never add a new column per language. Instead, extract all translatable fields into a separate translation table — adding a new language then requires zero schema changes.
 
-**The Problem with Adding Columns**
+### The Problem with Adding Columns
 
 A naive approach adds language-specific columns directly to the main table:
 
-```
+```text
 ❌ Anti-pattern: column-per-language
 
 categories
@@ -43,11 +47,11 @@ Problem: every new language = 2 more columns per translatable field
          10 translatable fields × 5 languages = 50 extra columns
 ```
 
-**The Solution: Translation Table**
+### The Solution: Translation Table
 
 Split the table into a parent table (language-neutral data) and a translation table (all translatable fields).
 
-```
+```text
 ✅ Recommended: one-to-many translation table
 
 categories                    categories_translation
@@ -62,10 +66,10 @@ Composite PK (category_id + language) guarantees no duplicate
 translations for the same category in the same language.
 ```
 
-**Schema Design**
+### Schema Design
 
 | Table | Column | Type | Constraint |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `categories` | id | VARCHAR(100) | PRIMARY KEY |
 | `categories` | position | INT | NOT NULL |
 | `categories_translation` | category_id | VARCHAR(100) | PK, FK → categories.id |
@@ -73,7 +77,7 @@ translations for the same category in the same language.
 | `categories_translation` | name | VARCHAR(100) | NOT NULL |
 | `categories_translation` | description | TEXT | NULL allowed |
 
-**SQL Implementation**
+### SQL Implementation
 
 ```sql
 CREATE TABLE categories (
@@ -93,7 +97,7 @@ CREATE TABLE categories_translation (
 ) ENGINE = InnoDB;
 ```
 
-**Querying by Language**
+### Querying by Language
 
 ```sql
 -- Show all categories in Indonesian
@@ -107,9 +111,9 @@ ORDER BY c.position;
 WHERE ct.language = 'en_US'
 ```
 
-**Adding a New Language**
+### Adding a New Language
 
-```
+```text
 Adding Japanese support:
 
 ❌ Old approach:  ALTER TABLE categories ADD COLUMN name_jp VARCHAR(100);
@@ -128,18 +132,18 @@ Adding Japanese support:
 
 > **Key Insight:** Separate concerns into distinct tables: one for notification content, one for read status. Never mix per-user state into a global broadcast row.
 
-**Feature Requirements**
+### Feature Requirements
 
 | Feature | Description |
-|---|---|
+| --- | --- |
 | **Inbox** | List all notifications for the logged-in user |
 | **Categories** | Filter by type — `promo` (global broadcast) or `info` (user-specific) |
 | **Read / Unread** | Track which notifications each user has read |
 | **Counter** | Show the number of unread notifications in the menu badge |
 
-**Table Design Overview**
+### Table Design Overview
 
-```
+```text
 ┌──────────┐        ┌──────────────────────┐        ┌──────────────────────┐
 │   user   │──┐     │     notification     │        │ notification_read    │
 │──────────│  │     │──────────────────────│        │──────────────────────│
@@ -158,7 +162,7 @@ user_id = NULL  →  global broadcast (visible to all users)
 user_id = 'eko' →  private notification (visible only to 'eko')
 ```
 
-**User & Notification Tables**
+### User & Notification Tables
 
 ```sql
 CREATE TABLE user (
@@ -178,9 +182,9 @@ CREATE TABLE notification (
 ) ENGINE = InnoDB;
 ```
 
-**Why `user_id` is Nullable**
+### Why `user_id` is Nullable
 
-```
+```text
 Scenario: "11.11 Sale" promo must reach 1,000,000 users
 
 ❌ Insert 1 row per user:  INSERT ... (promo, user1)
@@ -194,7 +198,7 @@ Query for user 'eko':
   ORDER BY created_at DESC
 ```
 
-**Category Table**
+### Category Table
 
 ```sql
 CREATE TABLE category (
@@ -218,7 +222,7 @@ WHERE (n.user_id = 'eko' OR n.user_id IS NULL)
 ORDER BY n.created_at DESC;
 ```
 
-**Read / Unread Status**
+### Read / Unread Status
 
 Storing `is_read` on the notification row itself breaks for global broadcasts — marking it read for one user would mark it read for everyone. A separate table solves this.
 
@@ -251,9 +255,9 @@ ORDER BY n.created_at DESC;
 -- is_read = null  → not yet read (no row in notification_read)
 ```
 
-**Read / Unread Decision Flow**
+### Read / Unread Decision Flow
 
-```
+```text
 New notification arrives
         │
         ▼
@@ -276,7 +280,7 @@ New notification arrives
   VALUES (?, ?, TRUE)
 ```
 
-**Notification Counter**
+### Notification Counter
 
 No extra table needed — reuse the same LEFT JOIN query with a COUNT and filter for unread:
 
@@ -295,7 +299,7 @@ WHERE (n.user_id = 'eko' OR n.user_id IS NULL)
 ## 📌 Quick Reference
 
 | Pattern | When to Use | Key Rule |
-|---|---|---|
+| --- | --- | --- |
 | **Translation table** | Any field that must display in multiple languages | Composite PK: `(entity_id, language)` |
 | **Nullable user_id** | Notifications or content shared with all users | `NULL` = global; query with `OR user_id IS NULL` |
 | **Separate read table** | Per-user read state on shared/global content | `LEFT JOIN` + treat NULL as unread |
