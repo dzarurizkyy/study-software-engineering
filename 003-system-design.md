@@ -6,18 +6,101 @@ A comprehensive reference for backend engineers — covering authentication, sys
 
 ## 📋 Table of Contents
 
-- [OAuth & SSO](#-oauth--single-sign-on)
+- [OAuth & Single Sign-On](#-oauth--single-sign-on)
+  - [The 4 Core Roles in OAuth](#the-4-core-roles-in-oauth)
+  - [Basic OAuth Flow](#basic-oauth-flow)
+  - [SSO Flow with Authorization Code Grant](#sso-flow-with-authorization-code-grant)
+  - [SSO Solutions](#sso-solutions)
 - [JWT & OAuth Relationship](#-jwt--oauth-relationship)
+  - [The Problem Without JWT](#the-problem-without-jwt)
+  - [The Solution With JWT](#the-solution-with-jwt)
+  - [JWT Structure](#jwt-structure)
+  - [Why JWT is Secure](#why-jwt-is-secure)
+  - [What to Put in JWT Payload](#what-to-put-in-jwt-payload)
 - [When JWT Tokens Get Stolen](#-when-jwt-tokens-get-stolen)
+  - [Two Tokens in OAuth](#two-tokens-in-oauth)
+  - [Token Renewal Flow](#token-renewal-flow)
+  - [If Access Token is Stolen](#if-access-token-is-stolen)
+  - [If Refresh Token is Stolen](#if-refresh-token-is-stolen)
+  - [Active Sessions Table (in DB)](#active-sessions-table-in-db)
+  - [Best Practices](#best-practices)
 - [Preventing Downtime in Kubernetes](#-preventing-downtime-in-kubernetes)
+  - [1. Set Correct Min/Max Pod Limits](#1-set-correct-minmax-pod-limits)
+  - [2. Know Your Application's Capacity (Performance Testing)](#2-know-your-applications-capacity-performance-testing)
+  - [3. Consider Application Startup Time](#3-consider-application-startup-time)
+  - [4. Implement a Rate Limiter](#4-implement-a-rate-limiter)
 - [Before Migrating to Microservices](#-before-migrating-to-microservices)
+  - [The Migration Ladder](#the-migration-ladder)
+  - [Stage 1: Monolith First](#stage-1-monolith-first)
+  - [Stage 2: Optimize the Monolith](#stage-2-optimize-the-monolith)
+  - [Stage 3: CQRS (Command Query Responsibility Segregation)](#stage-3-cqrs-command-query-responsibility-segregation)
+  - [Stage 4: Microservices — When to Actually Migrate](#stage-4-microservices--when-to-actually-migrate)
 - [Before Using Kafka](#-before-using-kafka)
+  - [1. Scalability — Designed for Clusters](#1-scalability--designed-for-clusters)
+  - [2. Throughput — Extremely High](#2-throughput--extremely-high)
+  - [3. Message Size Limit](#3-message-size-limit)
+  - [4. Partitions](#4-partitions)
+  - [5. Order Guarantee](#5-order-guarantee)
+  - [6. Persistence & Retention](#6-persistence--retention)
+  - [7. Rebalance Effect](#7-rebalance-effect)
+  - [8. Consumer Groups](#8-consumer-groups)
 - [ClickHouse & OLAP Analytics](#-clickhouse--olap-analytics)
+  - [OLTP vs OLAP](#oltp-vs-olap)
+  - [Syncing Data: Batch ETL vs CDC](#syncing-data-batch-etl-vs-cdc)
+  - [Demo Architecture](#demo-architecture)
+  - [ClickHouse's Native Kafka Integration](#clickhouses-native-kafka-integration)
+  - [Table Engines](#table-engines)
+  - [5 Analytics Features (Demo Dashboard)](#5-analytics-features-demo-dashboard)
+  - [1. Streaming](#1-streaming)
+  - [2. Funnel](#2-funnel)
+  - [3. Distribution (Cardinality Estimation)](#3-distribution-cardinality-estimation)
+  - [4. Pre-Aggregated](#4-pre-aggregated)
+  - [5. Time Travel](#5-time-travel)
+  - [Conclusion](#conclusion)
 - [Software Architecture Patterns](#-software-architecture-patterns)
+  - [Classification](#classification)
+  - [Partitioning Approaches](#partitioning-approaches)
+  - [A. Layered Architecture (n-Tier)](#a-layered-architecture-n-tier)
+  - [B. MVC (Model-View-Controller)](#b-mvc-model-view-controller)
+  - [C. Hexagonal Architecture (Ports & Adapters)](#c-hexagonal-architecture-ports--adapters)
+  - [D. Microkernel (Plugin Architecture)](#d-microkernel-plugin-architecture)
+  - [E. Client-Server](#e-client-server)
+  - [F. Master-Slave & Master-Master](#f-master-slave--master-master)
+  - [G. Peer-to-Peer (P2P)](#g-peer-to-peer-p2p)
+  - [H. Microservices](#h-microservices)
+  - [I. Event-Driven Architecture](#i-event-driven-architecture)
+  - [J. Pipeline Architecture (Data Pipeline)](#j-pipeline-architecture-data-pipeline)
+  - [K. Space-Based Architecture](#k-space-based-architecture)
 - [Timeout](#-timeout)
+  - [What Happens Without a Timeout](#what-happens-without-a-timeout)
+  - [How to Set the Right Timeout](#how-to-set-the-right-timeout)
+  - [The Double-Charge Trap](#the-double-charge-trap)
+  - [Golden Rule](#golden-rule)
 - [Circuit Breaker](#-circuit-breaker)
+  - [The Problem](#the-problem)
+  - [The Circuit Breaker Pattern (3 States)](#the-circuit-breaker-pattern-3-states)
+  - [Fallback Strategies When Circuit is Open](#fallback-strategies-when-circuit-is-open)
+  - [Implementation](#implementation)
 - [Backpressure](#-backpressure)
+  - [What is Backpressure?](#what-is-backpressure)
+  - [1. Multi-Threading](#1-multi-threading)
+  - [2. Horizontal Scaling](#2-horizontal-scaling)
+  - [3. In-App Queue](#3-in-app-queue)
+  - [4. Rate Limiting (Reject Overflow)](#4-rate-limiting-reject-overflow)
+  - [5. Message Broker (Async Buffer)](#5-message-broker-async-buffer)
+  - [Choosing the Right Strategy](#choosing-the-right-strategy)
 - [OpenTelemetry & Distributed Tracing](#-opentelemetry--distributed-tracing)
+  - [The Problem Without Distributed Tracing](#the-problem-without-distributed-tracing)
+  - [The Traditional (Manual) Workaround: Request ID](#the-traditional-manual-workaround-request-id)
+  - [The Solution: OpenTelemetry](#the-solution-opentelemetry)
+  - [Core Concepts](#core-concepts)
+  - [How Trace ID Propagates](#how-trace-id-propagates)
+  - [Setup Per Language](#setup-per-language)
+  - [What You See in Jaeger UI](#what-you-see-in-jaeger-ui)
+  - [Debugging an Error with Jaeger](#debugging-an-error-with-jaeger)
+  - [Best Practice: Return Trace ID to the Client](#best-practice-return-trace-id-to-the-client)
+  - [OpenTelemetry with Message Brokers](#opentelemetry-with-message-brokers)
+  - [Implementation Checklist](#implementation-checklist)
 - [Quick Reference](#-quick-reference)
 
 ---
@@ -26,9 +109,9 @@ A comprehensive reference for backend engineers — covering authentication, sys
 
 > **Key Insight:** OAuth 2.0 is a standard protocol for centralizing authentication. When a company has multiple applications, OAuth lets users log in once and access all of them — this is called SSO (Single Sign-On).
 
-**The 4 Core Roles in OAuth**
+### The 4 Core Roles in OAuth
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │                      OAUTH ROLES                             │
 │                                                              │
@@ -42,9 +125,9 @@ A comprehensive reference for backend engineers — covering authentication, sys
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Basic OAuth Flow**
+### Basic OAuth Flow
 
-```
+```text
 User                Client App            Auth Server        Resource Server
  │                      │                     │                    │
  │── enter credentials ─►│                     │                    │
@@ -56,11 +139,11 @@ User                Client App            Auth Server        Resource Server
  │                      │◄─────────────────── protected data ──────│
 ```
 
-**SSO Flow with Authorization Code Grant**
+### SSO Flow with Authorization Code Grant
 
 Used when a company has multiple separate websites (e.g., Travel, Store, E-Learning).
 
-```
+```text
 User           Client App          Auth Server (Centralized)
  │                 │                        │
  │─ click Login ──►│                        │
@@ -79,7 +162,8 @@ User           Client App          Auth Server (Centralized)
  │                 │◄─── access token ──────│
 ```
 
-**SSO Solutions**
+### SSO Solutions
+
 - Build your own Authorization Server
 - Use open-source: **Keycloak**, **CAS**
 
@@ -89,11 +173,11 @@ User           Client App          Auth Server (Centralized)
 
 > **Key Insight:** JWT and OAuth are completely independent standards. There is no rule that says you must use JWT with OAuth — but there's a practical reason why most people combine them.
 
-**The Problem Without JWT**
+### The Problem Without JWT
 
 Every resource server must verify tokens by asking the auth server.
 
-```
+```text
 Client ──► Resource Server A ──► Auth Server (verify token)
 Client ──► Resource Server B ──► Auth Server (verify token)
 Client ──► Resource Server C ──► Auth Server (verify token)
@@ -104,11 +188,11 @@ Result:
 - If Auth Server dies → ALL resource servers fail
 ```
 
-**The Solution With JWT**
+### The Solution With JWT
 
 Resource servers validate tokens locally using a shared Secret Key — no auth server call needed.
 
-```
+```text
 Client ──► Resource Server A  [validates JWT locally] ✅
 Client ──► Resource Server B  [validates JWT locally] ✅
 Client ──► Resource Server C  [validates JWT locally] ✅
@@ -118,9 +202,9 @@ Result:
 - Auth Server failure does not affect resource servers
 ```
 
-**JWT Structure**
+### JWT Structure
 
-```
+```text
 eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImVrbyJ9.abc123signature
 │─────── Header ────│  │───────── Payload ──────│  │─ Signature ─│
 
@@ -129,9 +213,9 @@ Payload → user data (username, user_id, exp) — base64 encoded JSON
 Signature → HMAC(base64(header) + "." + base64(payload), SECRET_KEY)
 ```
 
-**Why JWT is Secure**
+### Why JWT is Secure
 
-```
+```text
 Attacker decodes payload:  {"username": "eko"}
 Attacker changes payload:  {"username": "admin"}
 Attacker re-encodes it...
@@ -143,10 +227,10 @@ Resource server checks:
   if recomputed_sig ≠ token.signature → REJECTED ❌
 ```
 
-**What to Put in JWT Payload**
+### What to Put in JWT Payload
 
 | ✅ Safe to Include | ❌ Never Include |
-|---|---|
+| --- | --- |
 | user_id / username | password |
 | email (if static) | sensitive PII |
 | expiry time (exp) | payment info |
@@ -160,9 +244,9 @@ Resource server checks:
 
 > **Key Insight:** If an access token is stolen, it can be used by anyone. OAuth minimizes the damage window through short-lived access tokens and revocable refresh tokens.
 
-**Two Tokens in OAuth**
+### Two Tokens in OAuth
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │                   TOKEN LIFECYCLE                            │
 │                                                              │
@@ -175,9 +259,9 @@ Resource server checks:
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Token Renewal Flow**
+### Token Renewal Flow
 
-```
+```text
 Client                Resource Server          Auth Server        DB
   │                         │                      │              │
   │──── request + AT ──────►│                      │              │
@@ -197,9 +281,9 @@ Client                Resource Server          Auth Server        DB
   │──── request + new AT ──►│  [valid again] ──────│              │
 ```
 
-**If Access Token is Stolen**
+### If Access Token is Stolen
 
-```
+```text
 Attacker steals AT
      │
      └──► Can impersonate user for up to 1 hour
@@ -207,9 +291,9 @@ Attacker steals AT
           (they don't have the Refresh Token)
 ```
 
-**If Refresh Token is Stolen**
+### If Refresh Token is Stolen
 
-```
+```text
 Attacker steals RT
      │
      └──► Can keep generating new ATs indefinitely
@@ -223,9 +307,9 @@ Remediation:
   5. Attacker can no longer generate new ATs ✅
 ```
 
-**Active Sessions Table (in DB)**
+### Active Sessions Table (in DB)
 
-```
+```text
 ┌────────────┬──────────────┬───────────────────────┐
 │ session_id │ refresh_token│ user_agent            │
 ├────────────┼──────────────┼───────────────────────┤
@@ -236,10 +320,10 @@ Remediation:
               Delete this row → device is logged out
 ```
 
-**Best Practices**
+### Best Practices
 
 | Concern | Recommendation |
-|---|---|
+| --- | --- |
 | Access token lifespan | Keep short: 15–60 minutes |
 | Refresh token | Always store in database |
 | Token revocation | Delete RT row from DB |
@@ -252,11 +336,9 @@ Remediation:
 
 > **Key Insight:** Using Kubernetes does not guarantee zero downtime. Kubernetes is only as reliable as your configuration and capacity planning.
 
-**The 4 Critical Areas**
-
 ### 1. Set Correct Min/Max Pod Limits
 
-```
+```text
 ❌ Minimum Pods = 1
    │
    └──► Pod crashes → app is DOWN during restart
@@ -273,7 +355,7 @@ Remediation:
 
 ### 2. Know Your Application's Capacity (Performance Testing)
 
-```
+```text
 Step 1: Run performance test on 1 Pod
         → Find its max RPS (e.g., 150 RPS per Pod)
 
@@ -290,7 +372,7 @@ Step 3: Provision hardware accordingly
 
 ### 3. Consider Application Startup Time
 
-```
+```text
 Scenario: App takes 60 seconds to start
 
 Traffic spike hits → Kubernetes triggers autoscale
@@ -305,14 +387,14 @@ During those 60 seconds:
 
 **Fix:** Trigger autoscaling earlier
 
-```
+```text
 ❌ Scale when CPU = 80% → too late, app already struggling
 ✅ Scale when CPU = 60% → gives pods time to warm up before peak
 ```
 
 ### 4. Implement a Rate Limiter
 
-```
+```text
 Designed capacity: 5,000 RPS
 Actual traffic:    6,000 RPS
 
@@ -333,9 +415,9 @@ With rate limiter:
 
 > **Key Insight:** Microservices should be the last resort, not the first instinct. Most teams migrate too early, introducing complexity they don't yet need.
 
-**The Migration Ladder**
+### The Migration Ladder
 
-```
+```text
         Microservices  ◄── Only when team/org complexity demands it
               │
             CQRS        ◄── When search/query patterns become unpredictable
@@ -347,7 +429,7 @@ With rate limiter:
 
 ### Stage 1: Monolith First
 
-```
+```text
 Advantages:
   ✅ Single codebase — easy to read and debug
   ✅ Simple deployment (one unit)
@@ -362,7 +444,7 @@ When to stay here:
 
 Before rebuilding, diagnose the actual bottleneck:
 
-```
+```text
 App is slow
     │
     ├── Database slow?
@@ -380,7 +462,7 @@ App is slow
 
 **Problem:** Dynamic search filters on millions of rows — adding indexes for every combination slows down writes.
 
-```
+```text
 Without CQRS:
   One database handles ALL operations
   → Heavy read filters slow down write transactions
@@ -404,7 +486,7 @@ With CQRS:
 
 The trigger is almost always **organizational**, not technical:
 
-```
+```text
 Technical performance is already solved by CQRS.
 Migrate to microservices when:
 
@@ -426,11 +508,9 @@ Migrate to microservices when:
 
 > **Key Insight:** Kafka is powerful but complex. Understanding its characteristics prevents wrong architecture decisions and costly production issues.
 
-**8 Key Characteristics**
-
 ### 1. Scalability — Designed for Clusters
 
-```
+```text
 Minimum setup: 3 nodes
 Scaling: Add nodes in odd numbers (3 → 5 → 7)
          New node joins cluster, data distributes automatically
@@ -439,7 +519,7 @@ Scaling: Add nodes in odd numbers (3 → 5 → 7)
 
 ### 2. Throughput — Extremely High
 
-```
+```text
 3-machine Kafka cluster → up to 2,000,000 writes/second
 
 Best for:
@@ -453,7 +533,7 @@ Not ideal for:
 
 ### 3. Message Size Limit
 
-```
+```text
 Default max: 1 MB per message
 
 For large files:
@@ -465,7 +545,7 @@ Warning: Increasing max message size causes consumer timeout issues
 
 ### 4. Partitions
 
-```
+```text
 Topic
   ├── Partition 0 ──► Consumer A
   ├── Partition 1 ──► Consumer B
@@ -479,7 +559,7 @@ Rules:
 
 ### 5. Order Guarantee
 
-```
+```text
 Traditional queue (e.g., RabbitMQ):
   No ordering guarantee
 
@@ -496,7 +576,7 @@ Trade-off: If one message in a partition is stuck,
 
 ### 6. Persistence & Retention
 
-```
+```text
 Traditional queue: message deleted after consumed
 Kafka: messages stored on disk, consumer moves an Offset pointer
 
@@ -518,7 +598,7 @@ Retention options:
 
 ### 7. Rebalance Effect
 
-```
+```text
 Event: New consumer added (autoscale) or consumer dies
 
 Kafka rebalance process:
@@ -533,7 +613,7 @@ Recommendation:
 
 ### 8. Consumer Groups
 
-```
+```text
                    Topic: Orders
                        │
           ┌────────────┴────────────┐
@@ -553,9 +633,9 @@ Each group has its own offset — no competition for messages
 
 > **Key Insight:** ClickHouse is a column-oriented OLAP database built for analyzing huge volumes of data fast — it complements an OLTP database like PostgreSQL/MySQL, it does not replace it.
 
-**OLTP vs OLAP**
+### OLTP vs OLAP
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │                      OLTP vs OLAP                            │
 │                                                              │
@@ -571,9 +651,9 @@ Each group has its own offset — no competition for messages
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Syncing Data: Batch ETL vs CDC**
+### Syncing Data: Batch ETL vs CDC
 
-```
+```text
 Batch ETL (traditional):
   Extract → Transform → Load   (runs on a schedule, e.g. hourly)
   OLAP data is stale until the next run ❌
@@ -585,9 +665,9 @@ CDC (Change Data Capture) — recommended:
                                         Streamed into OLAP in seconds ✅
 ```
 
-**Demo Architecture**
+### Demo Architecture
 
-```
+```text
 PostgreSQL (OLTP)
       │  WAL
       ▼
@@ -606,9 +686,9 @@ Tables captured by Debezium:
   customers, products, orders, order_items
 ```
 
-**ClickHouse's Native Kafka Integration**
+### ClickHouse's Native Kafka Integration
 
-```
+```text
 No bridge app needed (e.g. Logstash) — ClickHouse reads Kafka natively
 via a declarative Kafka Engine table.
 
@@ -622,20 +702,20 @@ via a declarative Kafka Engine table.
   [Main table]            ← MergeTree / ReplacingMergeTree
 ```
 
-**Table Engines**
+### Table Engines
 
 | Engine | Behavior | Best For |
-|---|---|---|
+| --- | --- | --- |
 | **MergeTree** | Append-only — data keeps growing | Time-series / chronological event data |
 | **ReplacingMergeTree** | Overwrites the row with the same ID, keeping the latest by timestamp | Mutable entities (customers, products) — avoids expensive OLAP `UPDATE`s |
 
-**5 Analytics Features (Demo Dashboard)**
+### 5 Analytics Features (Demo Dashboard)
 
 Demo app generates 5 orders every 2 seconds to simulate live traffic.
 
 ### 1. Streaming
 
-```
+```text
 One query, multiple time windows — countIf() / sumIf():
   → order count & revenue for last 1m / 5m / 15m / 1h, simultaneously
 
@@ -645,7 +725,7 @@ lagInFrame() compares the current window vs the previous one
 
 ### 2. Funnel
 
-```
+```text
 windowFunnel() tracks an ordered sequence of statuses per order:
 
   place ──► paid ──► ship ──► delivered
@@ -655,7 +735,7 @@ Shows conversion rate at each step and where customers drop off
 
 ### 3. Distribution (Cardinality Estimation)
 
-```
+```text
 Problem: count(DISTINCT user_id) over billions of rows is very expensive
 
 Solution: uniqCombined() — HyperLogLog algorithm
@@ -666,7 +746,7 @@ Solution: uniqCombined() — HyperLogLog algorithm
 
 ### 4. Pre-Aggregated
 
-```
+```text
 AggregatingMergeTree + Materialized View
   → Rolls raw events up into per-minute aggregates as they arrive
   → Dashboard queries the small pre-aggregated table, not raw events
@@ -675,16 +755,16 @@ AggregatingMergeTree + Materialized View
 
 ### 5. Time Travel
 
-```
+```text
 Data is append-only (never overwritten in place)
   → Move a time slider to any past moment
   → Reconstruct the exact state of the data at that point in time
   → Useful for auditing / historical comparison
 ```
 
-**Conclusion**
+### Conclusion
 
-```
+```text
 ClickHouse complements an OLTP database — it does NOT replace
 PostgreSQL or MySQL.
 
@@ -704,9 +784,9 @@ query-ready at the exact same millisecond it was inserted into OLTP.
 
 > **Key Insight:** No pattern is universally right or wrong — only appropriate or inappropriate for a given business context.
 
-**Classification**
+### Classification
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │               ARCHITECTURE CLASSIFICATION                    │
 │                                                              │
@@ -719,9 +799,9 @@ query-ready at the exact same millisecond it was inserted into OLTP.
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Partitioning Approaches**
+### Partitioning Approaches
 
-```
+```text
 Technical Partitioning          Domain Partitioning
 ─────────────────────           ──────────────────
 Group by function:              Group by business domain:
@@ -737,7 +817,7 @@ Basis: DDD (Domain-Driven Design) by Eric Evans
 
 ### A. Layered Architecture (n-Tier)
 
-```
+```text
 Presentation Layer   ← handles HTTP requests / responses
        ↓
 Business Layer       ← core logic, rules, validation
@@ -755,7 +835,7 @@ Principle: "Layers of Isolation"
 
 ### B. MVC (Model-View-Controller)
 
-```
+```text
          HTTP Request
               ↓
          Controller  ──── reads/writes ────► Model (data)
@@ -771,7 +851,7 @@ Principle: "Layers of Isolation"
 
 **Problem it solves:** Application logic tied to a specific technology (e.g., MySQL) — hard to swap.
 
-```
+```text
 ┌──────────────────────────────────────────────────────┐
 │                 Core Application                     │
 │                                                      │
@@ -791,7 +871,7 @@ Swap payment gateway: replace Adapter only, core logic untouched
 
 ### D. Microkernel (Plugin Architecture)
 
-```
+```text
 ┌──────────────────────┐
 │    Core System       │   ← minimal, stable engine
 │  (management only)   │
@@ -808,7 +888,7 @@ Examples: VS Code extensions, Chrome extensions, Android Studio plugins
 
 ### E. Client-Server
 
-```
+```text
 Client (UI)  ←──── TCP/IP (HTTP) ────►  Server (Logic + DB)
   Web
   iOS         All share one server
@@ -819,7 +899,7 @@ Client (UI)  ←──── TCP/IP (HTTP) ────►  Server (Logic + DB)
 
 ### F. Master-Slave & Master-Master
 
-```
+```text
 Master-Slave:
   All writes → Master
   Master replicates → Slave(s)
@@ -837,7 +917,7 @@ Used by: MySQL, PostgreSQL, Elasticsearch, Cassandra
 
 ### G. Peer-to-Peer (P2P)
 
-```
+```text
 Every node is both Client AND Server
 
 Node A ◄──► Node B ◄──► Node C
@@ -852,7 +932,7 @@ Used by: BitTorrent, Bitcoin/blockchain
 
 ### H. Microservices
 
-```
+```text
 API Gateway (entry point)
      │
      ├──► User Service    (owns user DB)
@@ -872,7 +952,7 @@ Rules:
 
 **Problem it solves:** Synchronous microservices create cascading failures — if Service A is down, Service B can't continue.
 
-```
+```text
 Synchronous (fragile):
   Order Service ──► Payment Service  [if payment is down → orders fail]
 
@@ -887,7 +967,7 @@ Trade-off: Data is eventually consistent (small delay), not instant
 
 ### J. Pipeline Architecture (Data Pipeline)
 
-```
+```text
 Data Stream Input
      │
      ▼
@@ -911,7 +991,7 @@ Used by: AWS Lambda, Google Cloud Functions, log processing systems
 
 **Problem it solves:** Database becomes a bottleneck during extreme traffic spikes (flash sales, ticket wars).
 
-```
+```text
 Traditional:
   Request → App → Database  [DB is the bottleneck]
 
@@ -929,7 +1009,7 @@ Trade-off: Complexity increases significantly; data durability risk
 
 **Combining Patterns** (Common in Production)
 
-```
+```text
 Example architecture:
   Microservices  ← inter-service structure
     └── Event-Driven  ← communication between services
@@ -942,9 +1022,9 @@ Example architecture:
 
 > **Key Insight:** Forgetting to set a timeout is one of the most common causes of cascading application failure in distributed systems.
 
-**What Happens Without a Timeout**
+### What Happens Without a Timeout
 
-```
+```text
 App ──── query ────► Database  (network issue — no response)
  │
  └──► Thread waits... and waits... and waits...
@@ -958,9 +1038,9 @@ Thread pool exhausted:
   App appears online but is completely frozen ❌
 ```
 
-**How to Set the Right Timeout**
+### How to Set the Right Timeout
 
-```
+```text
 Internal systems (own DB / Redis):
   → You control the infrastructure
   → Set based on worst-case acceptable latency (e.g., 30s)
@@ -970,9 +1050,9 @@ Third-party APIs (payment gateways, banks, logistics):
   → Set YOUR timeout slightly higher than theirs
 ```
 
-**The Double-Charge Trap**
+### The Double-Charge Trap
 
-```
+```text
 Payment gateway processes transactions up to 30 seconds.
 You set timeout to 5 seconds.
 
@@ -984,9 +1064,9 @@ User retries payment → Double charge! 💸
 Fix: Set your timeout to 35 seconds (above the 30s gateway limit)
 ```
 
-**Golden Rule**
+### Golden Rule
 
-```
+```text
 Your app timeout > Third-party server timeout
 
 Example:
@@ -1003,9 +1083,9 @@ Example:
 
 > **Key Insight:** When a downstream service degrades, a Circuit Breaker prevents it from dragging your entire system down with it.
 
-**The Problem**
+### The Problem
 
-```
+```text
 Your App (100 RPS capacity)
      │
      └──► Third-Party API (20 RPS capacity)
@@ -1015,9 +1095,9 @@ Response time grows exponentially
 Eventually YOUR app crashes — not theirs ❌
 ```
 
-**The Circuit Breaker Pattern (3 States)**
+### The Circuit Breaker Pattern (3 States)
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                   CIRCUIT BREAKER STATES                    │
 │                                                             │
@@ -1045,9 +1125,9 @@ Eventually YOUR app crashes — not theirs ❌
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Fallback Strategies When Circuit is Open**
+### Fallback Strategies When Circuit is Open
 
-```
+```text
 Option 1: Route to backup provider
   Midtrans down → automatically try Xendit
 
@@ -1058,9 +1138,9 @@ Option 3: Return sentinel value
   Return -1 → frontend hides the payment button temporarily
 ```
 
-**Implementation**
+### Implementation
 
-```
+```text
 Don't build this from scratch — use a battle-tested library:
 
   Java:    Resilience4j
@@ -1075,9 +1155,9 @@ Don't build this from scratch — use a battle-tested library:
 
 > **Key Insight:** Backpressure occurs when incoming requests arrive faster than your system can process them. Without a strategy, the queue grows unboundedly until the system crashes.
 
-**What is Backpressure?**
+### What is Backpressure?
 
-```
+```text
 Client sends: 100 RPS
 App processes: 50 RPS
 Unprocessed:  +50 per second
@@ -1088,11 +1168,9 @@ Second 3: 150 waiting
 Second N: Out of memory → CRASH ❌
 ```
 
-**5 Solutions**
-
 ### 1. Multi-Threading
 
-```
+```text
 1 thread processes 5 RPS
 Target: 100 RPS → need 20–30 threads
 
@@ -1105,7 +1183,7 @@ Caution:  CPU-intensive tasks → too many threads = context switching overhead
 
 ### 2. Horizontal Scaling
 
-```
+```text
 1 server: 50 RPS
                     ┌──► Server A (50 RPS)
 Client ──► Load Balancer
@@ -1119,7 +1197,7 @@ Limitation: budget (cost of servers)
 
 ### 3. In-App Queue
 
-```
+```text
 Spike: 110 RPS for 2 seconds (normal is 100 RPS)
 
 Without queue: 10 requests dropped ❌
@@ -1133,7 +1211,7 @@ Languages with built-in support:
 
 ### 4. Rate Limiting (Reject Overflow)
 
-```
+```text
 Capacity: 100 RPS
 
 Traffic spike: 1,000 RPS
@@ -1153,7 +1231,7 @@ Response to rejected requests:
 
 ### 5. Message Broker (Async Buffer)
 
-```
+```text
 Synchronous (fragile under load):
   Client ──HTTP──► Backend ──► DB
 
@@ -1169,9 +1247,9 @@ Trade-off: response is no longer instant — use only for
            non-real-time operations (notifications, analytics, etc.)
 ```
 
-**Choosing the Right Strategy**
+### Choosing the Right Strategy
 
-```
+```text
 Traffic spike is small & brief     → In-App Queue
 Need more sustained capacity       → Multi-Threading or Horizontal Scaling
 Traffic is wildly unpredictable    → Rate Limiter (protect from abuse)
@@ -1185,9 +1263,9 @@ Budget is the only constraint      → Horizontal Scaling (just add servers)
 
 > **Key Insight:** Logs alone are not enough for microservices debugging. OpenTelemetry provides a language-agnostic standard for tracing a single request across every service it touches — turning hours of log hunting into seconds of visual inspection.
 
-**The Problem Without Distributed Tracing**
+### The Problem Without Distributed Tracing
 
-```
+```text
 User reports: "Create order returned 500 Internal Server Error"
 
            Order Service
@@ -1208,9 +1286,9 @@ Developer has to:
   → Time-consuming, error-prone, no visual overview
 ```
 
-**The Traditional (Manual) Workaround: Request ID**
+### The Traditional (Manual) Workaround: Request ID
 
-```
+```text
 ✅ Simple but manual:
 
   1. Entry service (Order) generates X-Request-ID: "req-001"
@@ -1223,9 +1301,9 @@ Problems:
   - 100 services = 100 log files to check manually
 ```
 
-**The Solution: OpenTelemetry**
+### The Solution: OpenTelemetry
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │                    OPENTELEMETRY OVERVIEW                    │
 │                                                              │
@@ -1242,19 +1320,19 @@ Problems:
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Core Concepts**
+### Core Concepts
 
 | Concept | Description |
-|---|---|
+| --- | --- |
 | **Trace ID** | Unique ID assigned to one end-to-end request; propagated automatically across all services |
 | **Span** | One unit of work (an HTTP call, a DB query); each span belongs to a Trace |
 | **Parent Span** | The caller's span; child spans appear nested underneath it |
 | **Exporter** | The SDK component that sends trace data to the collector |
 | **Collector** | Central backend (Jaeger, Datadog, etc.) that stores and visualizes traces |
 
-**How Trace ID Propagates**
+### How Trace ID Propagates
 
-```
+```text
 User request arrives at Order Service
         │
         ▼
@@ -1274,9 +1352,9 @@ User request arrives at Order Service
 All spans share Trace ID "abc-123" → Jaeger can reconstruct the full tree
 ```
 
-**Setup Per Language**
+### Setup Per Language
 
-```
+```text
 Java — agent mode (zero application code change):
   Dockerfile:
     ADD otel-javaagent.jar /app/
@@ -1301,9 +1379,9 @@ Node.js / Bun — SDK mode:
   // all HTTP calls and DB queries traced automatically
 ```
 
-**What You See in Jaeger UI**
+### What You See in Jaeger UI
 
-```
+```text
 Trace: abc-123  (total: 312ms)
 │
 ├── Order Service: POST /order              [0ms – 312ms]
@@ -1324,9 +1402,9 @@ Color coding:
   ■ Red    = error (500, timeout, connection refused)
 ```
 
-**Debugging an Error with Jaeger**
+### Debugging an Error with Jaeger
 
-```
+```text
 Scenario: Order Service returns 500
 
 Step 1: Find trace by Trace ID in Jaeger
@@ -1345,9 +1423,9 @@ Without Jaeger: 30–60 minutes of log digging
 With Jaeger:    < 60 seconds to find the red span
 ```
 
-**Best Practice: Return Trace ID to the Client**
+### Best Practice: Return Trace ID to the Client
 
-```
+```text
 HTTP Response Header:
   X-Trace-Id: abc-123-def-456
 
@@ -1361,9 +1439,9 @@ Dev:  "Found it — Product Service returned 404 for product ID 999"
       Root cause identified in < 1 minute
 ```
 
-**OpenTelemetry with Message Brokers**
+### OpenTelemetry with Message Brokers
 
-```
+```text
 Works beyond HTTP — supports Kafka, RabbitMQ, Redis:
 
 Payment Service ──► Kafka topic: payments
@@ -1379,9 +1457,9 @@ Jaeger shows:
     └── Notification Service: consume from Kafka  [child span]
 ```
 
-**Implementation Checklist**
+### Implementation Checklist
 
-```
+```text
 Per service:
   ✅ Add OpenTelemetry SDK (or agent for Java)
   ✅ Set OTEL_SERVICE_NAME (unique per service)
@@ -1400,7 +1478,7 @@ Infrastructure:
 ## 📌 Quick Reference
 
 | Topic | Core Problem | Key Solution |
-|---|---|---|
+| --- | --- | --- |
 | **OAuth / SSO** | Login fragmented across apps | Centralized Auth Server + Authorization Code Grant |
 | **JWT** | Auth Server becomes bottleneck | Resource servers validate JWT locally with Secret Key |
 | **Stolen Token** | Access token compromised | Short-lived AT + DB-backed RT (revocable) |
